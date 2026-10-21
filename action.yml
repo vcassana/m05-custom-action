@@ -1,0 +1,25 @@
+name: 'Custom Action M05'
+description: 'Acción personalizada para el módulo 05'
+author: 'Tu Nombre'
+
+inputs:
+  who-to-greet:
+    description: 'Nombre de la persona o entidad a saludar'
+    required: true
+    default: 'Mundo'
+
+outputs:
+  greeting-result:
+    description: 'Resultado del mensaje generado'
+    value: ${{ steps.generate-greeting.outputs.greeting }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set Greeting Output
+      id: generate-greeting
+      shell: bash
+      run: |
+        MSG="¡Hola, ${{ inputs.who-to-greet }} desde m05-custom-action!"
+        echo "greeting=$MSG" >> $GITHUB_OUTPUT
+        echo "$MSG"

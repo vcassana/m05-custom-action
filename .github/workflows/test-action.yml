@@ -1,0 +1,25 @@
+name: Test Custom Action
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Ejecutar la acción local
+        id: custom_step
+        uses: ./
+        with:
+          who-to-greet: 'Victor'
+
+      - name: Verificar el output
+        run: |
+          echo "Output recibido: ${{ steps.custom_step.outputs.greeting-result }}"
