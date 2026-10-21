@@ -1,0 +1,43 @@
+name: Release — notify-and-tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión semántica del release (ej: 1.0.0)'
+        required: true
+        default: '1.0.0'
+      environment:
+        description: 'Entorno de despliegue'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: 'production'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ejecutar notify-and-tag
+        id: notify_and_tag
+        uses: ./.github/actions/notify-and-tag
+        with:
+          version: ${{ github.event.inputs.version }}
+          environment: ${{ github.event.inputs.environment }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          create_tag: 'true'
+
+      - name: Mostrar resultados del release
+        run: |
+          echo "Tag creado: ${{ steps.notify_and_tag.outputs.tag_name }}"
+          echo "Archivo de notas: ${{ steps.notify_and_tag.outputs.release_notes }}"
